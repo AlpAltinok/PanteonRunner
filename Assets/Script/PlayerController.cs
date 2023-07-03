@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     public float runningSpeed;
@@ -9,16 +9,27 @@ public class PlayerController : MonoBehaviour
     float newX = 0;
     public float xSpeed;
     public float limitX;
-    void Start()
+    Vector3 baslangýcnoktasý;
+    public Animator anim;
+    public GameObject player;
+    public GameObject SpedB;
+    void Awake()
     {
-        
+        baslangýcnoktasý = transform.position;
+    }
+    private void Start()
+    {
+
     }
 
-    // Update is called once per frame
+    void resetPlayer()
+    {
+        transform.position = baslangýcnoktasý;
+    }
     void Update()
     {
         SwipCheck();
-       
+
 
     }
     void SwipCheck()
@@ -40,4 +51,25 @@ public class PlayerController : MonoBehaviour
         Vector3 newPosition = new Vector3(newX, transform.position.y, transform.position.z + runningSpeed * Time.deltaTime);
         transform.position = newPosition;
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Resle"))
+        {
+            resetPlayer();
+        }
+        else if (other.gameObject.CompareTag("SpeedBoost"))
+        {
+            SpedB.SetActive(true);
+            runningSpeed = runningSpeed + 5;
+            StartCoroutine(Slow());
+        }
+    }
+    private IEnumerator Slow()
+    {
+        yield return new WaitForSeconds(2.0f);
+        SpedB.SetActive(false);
+        runningSpeed = runningSpeed -5;
+    }
+
+
 }
